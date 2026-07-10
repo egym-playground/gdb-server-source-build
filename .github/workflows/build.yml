@@ -97,6 +97,16 @@ jobs:
         make install-strip
         cd ..
 
+    - name: Patch Interpreter of Binaries 
+      run: |
+        if [ "${{ matrix.architecture }}" == "x86_64" ]; then
+            patchelf --set-interpreter /lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
+            patchelf --set-interpreter /lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+        elif [ "${{ matrix.architecture }}" == "armv7l" ]; then
+           patchelf --set-interpreter /lib/ld-linux-armhf.so.3 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
+           patchelf --set-interpreter /lib/ld-linux-armhf.so.3 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+        fi
+
     - name: Verify Binary
       run: |
         echo "Checking built artifacts:"
