@@ -9,6 +9,7 @@ on:
 
 env:
   GDB_VERSION: "17.1"
+  ICONV_VERSION: "1.18"
   GMP_VERSION: "6.3.0"
   MPFR_VERSION: "4.2.2"
 
@@ -32,18 +33,30 @@ jobs:
             cxx: arm-linux-gnueabihf-g++
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential patchelf ${{ matrix.cross_compile_packages }}
 
-    - name: Build gdbserver and its dependencies from source
+    - name: Build gdbserver and its Dependencies from Source
       run: |
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
+
+        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
+      
+        tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
+        cd libiconv-${{ env.ICONV_VERSION }}
+        ./configure \
+            --host=${{ matrix.gdbserver_host }} \
+            --enable-static \
+            --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
+        make -j"$(nproc)"
+        make install
+        cd ..
       
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
@@ -74,7 +87,8 @@ jobs:
 
         ./configure \
           --host=${{ matrix.gdbserver_host }} \
-          --enable-static --disable-tui --disable-inprocess-agent \
+          --enable-static --with-static-standard-libraries --disable-libcc1 --disable-tui --disable-inprocess-agent \
+          --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
           --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
           --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
           --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
@@ -83,10 +97,17 @@ jobs:
         make install-strip
         cd ..
 
-        patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
-        patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+    - name: Patch Interpreter of Binaries 
+      run: |
+        if [ "${{ matrix.architecture }}" == "x86_64" ]; then
+            patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
+            patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+        elif [ "${{ matrix.architecture }}" == "armv7l" ]; then
+           patchelf --set-interpreter /usr/lib/ld-linux-armhf.so.3 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
+           patchelf --set-interpreter /usr/lib/ld-linux-armhf.so.3 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+        fi
 
-    - name: Verify binary
+    - name: Verify Binary
       run: |
         echo "Checking built artifacts:"
         
@@ -94,7 +115,7 @@ jobs:
         
         file $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
 
-    - name: Upload gdbserver artifact
+    - name: Upload gdbserver Artifact
       uses: actions/upload-artifact@v4
       with:
         name: gdbserver-${{ env.GDB_VERSION }}-linux-${{ matrix.architecture }}
