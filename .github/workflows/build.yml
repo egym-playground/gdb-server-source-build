@@ -9,6 +9,7 @@ on:
 
 env:
   GDB_VERSION: "17.1"
+  ICONV_VERSION: "1.18"
   GMP_VERSION: "6.3.0"
   MPFR_VERSION: "4.2.2"
 
@@ -44,6 +45,16 @@ jobs:
       run: |
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
+        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }.tar.gz
+      
+        tar -xf libiconv-${{ env.ICONV_VERSION }.tar.gz
+        cd libiconv-${{ env.ICONV_VERSION }
+        ./configure \
+            --enable-static \
+            --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }/build
+        make -j"$(nproc)"
+        make install
+        cd ..
       
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
@@ -75,6 +86,7 @@ jobs:
         ./configure \
           --host=${{ matrix.gdbserver_host }} \
           --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
+          --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }/build \
           --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
           --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
           --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
