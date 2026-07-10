@@ -29,11 +29,6 @@ jobs:
             musl_target: arm-linux-musleabihf
 
     steps:
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential
-
     - name: Build gdbserver and its Dependencies from Source
       run: |
         export CC="${{ matrix.musl_target }}-gcc"
