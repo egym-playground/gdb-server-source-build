@@ -51,6 +51,7 @@ jobs:
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
         cd libiconv-${{ env.ICONV_VERSION }}
         ./configure \
+            --host=${{ matrix.gdbserver_host }} \
             --enable-static \
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
