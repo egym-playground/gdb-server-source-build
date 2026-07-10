@@ -32,15 +32,15 @@ jobs:
             cxx: arm-linux-gnueabihf-g++
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential patchelf ${{ matrix.cross_compile_packages }}
 
-    - name: Build gdbserver and its dependencies from source
+    - name: Build gdbserver and its Dependencies from Source
       run: |
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
@@ -82,11 +82,18 @@ jobs:
         make -j"$(nproc)"
         make install-strip
         cd ..
+        
+    - name: Patch Interpreter of Binaries 
+      run: |
+        if [ "${{ matrix.architecture }}" == "x86_64" ]; then
+            patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
+            patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+        elif [ "${{ matrix.architecture }}" == "armv7l" ]; then
+           patchelf --set-interpreter /usr/lib/ld-linux-armhf.so.3 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
+           patchelf --set-interpreter /usr/lib/ld-linux-armhf.so.3 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
+        fi
 
-        patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdb
-        patchelf --set-interpreter /usr/lib/ld-linux-x86-64.so.2 $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
-
-    - name: Verify binary
+    - name: Verify Binary
       run: |
         echo "Checking built artifacts:"
         
@@ -94,7 +101,7 @@ jobs:
         
         file $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin/gdbserver
 
-    - name: Upload gdbserver artifact
+    - name: Upload gdbserver Artifact
       uses: actions/upload-artifact@v4
       with:
         name: gdbserver-${{ env.GDB_VERSION }}-linux-${{ matrix.architecture }}
