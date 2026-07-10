@@ -101,6 +101,7 @@ jobs:
         make install-strip
         cd ..
 
+        cp $($CC -print-file-name=libpthread.so.0) $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin
         cp $($CC -print-file-name=libthread_db.so.1) $GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build/bin
 
     - name: Verify Binary
