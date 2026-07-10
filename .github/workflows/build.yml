@@ -29,9 +29,6 @@ jobs:
             musl_target: arm-linux-musleabihf
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
     - name: Install Dependencies
       run: |
         sudo apt-get update
