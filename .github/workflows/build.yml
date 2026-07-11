@@ -45,11 +45,11 @@ jobs:
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
 
-        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
 
-        echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
-        echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
-        echo "AR=${{ matrix.ar }}" >> $GITHUB_ENV
+        echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
+        echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
+        echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
 
     - name: Build libiconv from Source
       run: |
