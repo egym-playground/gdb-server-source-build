@@ -41,19 +41,18 @@ jobs:
       with:
         lfs: true
 
-    - name: Build gdbserver and its Dependencies from Source
+    - name: Setup musl ToolChain
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
-        
-        export PATH="$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin"
 
-        export CC=${{ matrix.cc }}
-        export CXX=${{ matrix.cxx }}
-        export AR=${{ matrix.ar }}
-        
-        export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-        export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-        
+        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> $GITHUB_PATH
+
+        echo "CC=${{ matrix.cc }}" >> $env:GITHUB_ENV
+        echo "CXX=${{ matrix.cxx }}" >> $env:GITHUB_ENV
+        echo "AR=${{ matrix.ar }}" >> $env:GITHUB_ENV
+
+    - name: Build libiconv from Source
+      run: |
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
@@ -64,8 +63,9 @@ jobs:
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
         make install
-        cd ..
-      
+
+    - name: Build GMP from Source
+      run: |
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
@@ -75,8 +75,9 @@ jobs:
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
         make -j"$(nproc)"
         make install
-        cd ..
-        
+
+    - name: Build MPFR from Source
+      run: |
         wget https://ftp.gnu.org/gnu/mpfr/mpfr-${{ env.MPFR_VERSION }}.tar.gz
         tar -xf mpfr-${{ env.MPFR_VERSION }}.tar.gz
         cd mpfr-${{ env.MPFR_VERSION }}
@@ -87,7 +88,11 @@ jobs:
             --prefix=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build
         make -j"$(nproc)"
         make install
-        cd ..
+
+    - name: Build gdbserver from Source
+      run: |
+        export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
 
         wget https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz
         tar -xf gdb-${{ env.GDB_VERSION }}.tar.gz
@@ -103,7 +108,6 @@ jobs:
 
         make LDFLAGS="-static" -j"$(nproc)"
         make install-strip
-        cd ..
 
     - name: Verify Binary
       run: |
