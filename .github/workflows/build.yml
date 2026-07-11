@@ -55,6 +55,8 @@ jobs:
     - name: Setup musl ToolChain
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
+        
+        # Important: The musl toolchain path must be appended to the end of system PATH
         echo "PATH=$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> $GITHUB_ENV
 
     - name: Build libiconv from Source
