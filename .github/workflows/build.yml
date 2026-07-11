@@ -22,15 +22,15 @@ jobs:
       matrix:
         include:
           - architecture: x86_64
-            configure_host: "x86_64-linux-musl"
-            cross_compile_packages: "x86_64-linux-musl-native"
+            configure_host: x86_64-linux-musl
+            cross_compile_packages: x86_64-linux-musl-native
             cc: x86_64-linux-musl-gcc
             cxx: x86_64-linux-musl-g++
             ar: x86_64-linux-musl-gcc-ar
 
           - architecture: armv7l
-            configure_host: "arm-linux-musleabihf"
-            cross_compile_packages: "armv7r-linux-musleabihf-cross"
+            configure_host: arm-linux-musleabihf
+            cross_compile_packages: armv7r-linux-musleabihf-cross
             cc: armv7r-linux-musleabihf-gcc
             cxx: armv7r-linux-musleabihf-g++
             ar: armv7r-linux-musleabihf-gcc-ar
@@ -81,6 +81,7 @@ jobs:
         cd gmp-${{ env.GMP_VERSION }}
 
         ./configure \
+            --build=x86_64-pc-linux-gnu \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
