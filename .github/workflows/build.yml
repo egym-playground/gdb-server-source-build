@@ -56,21 +56,6 @@ jobs:
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
         echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
 
-    - name: Build libiconv from Source
-      run: |
-        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
-            https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
-        gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
-        tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
-        cd libiconv-${{ env.ICONV_VERSION }}
-
-        ./configure \
-            --host=${{ matrix.configure_host }} \
-            --enable-static \
-            --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
-        make -j"$(nproc)"
-        make install
-
     - name: Build GMP from Source
       run: |
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
@@ -84,6 +69,21 @@ jobs:
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
 
+        make -j"$(nproc)"
+        make install
+
+    - name: Build libiconv from Source
+      run: |
+        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
+            https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
+        gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
+        tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
+        cd libiconv-${{ env.ICONV_VERSION }}
+
+        ./configure \
+            --host=${{ matrix.configure_host }} \
+            --enable-static \
+            --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
         make install
 
