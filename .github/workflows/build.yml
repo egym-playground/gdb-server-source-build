@@ -56,7 +56,7 @@ jobs:
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
         echo "PATH=$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> $GITHUB_ENV
-        set
+
     - name: Build libiconv from Source
       run: |
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
@@ -116,12 +116,12 @@ jobs:
         cd gdb-${{ env.GDB_VERSION }}
 
         ./configure \
-          --host=${{ matrix.configure_host }} \
-          --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
-          --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
-          --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
-          --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
-          --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
+            --host=${{ matrix.configure_host }} \
+            --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
+            --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
+            --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
+            --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
+            --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
         make LDFLAGS="-static" -j"$(nproc)"
         make install-strip
 
