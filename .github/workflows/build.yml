@@ -37,9 +37,9 @@ jobs:
     
     # Map the matrix properties to env variables for the whole job
     env:
-      CC: $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin/${{ matrix.cc }}
-      CXX: $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin/${{ matrix.cxx }}
-      AR: $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin/${{ matrix.ar }}
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      AR: ${{ matrix.ar }}
  
     steps:
     - name: Checkout Repository
@@ -55,6 +55,7 @@ jobs:
     - name: Setup musl ToolChain
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
+        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
 
     - name: Build libiconv from Source
       run: |
@@ -79,7 +80,10 @@ jobs:
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
 
-        CC_FOR_BUILD=/usr/bin/gcc ./configure \
+        gcc --version
+        set
+
+        CC_FOR_BUILD=gcc ./configure \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
