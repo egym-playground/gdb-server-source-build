@@ -56,8 +56,8 @@ jobs:
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
         echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
         
-        echo "CC_FOR_BUILD=gcc" >> "$GITHUB_ENV"
-        echo "CXX_FOR_BUILD=g++" >> "$GITHUB_ENV"
+        echo "CC_FOR_BUILD=$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin/gcc" >> "$GITHUB_ENV"
+        echo "CXX_FOR_BUILD=$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin/g++" >> "$GITHUB_ENV"
 
     - name: Build libiconv from Source
       run: |
