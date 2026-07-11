@@ -63,6 +63,12 @@ jobs:
 
     - name: Build libiconv from Source
       run: |
+        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
+
+        echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
+        echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
+        echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
+      
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
         gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
@@ -78,10 +84,11 @@ jobs:
 
     - name: Build GMP from Source
       run: |
-        export PATH="$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin"
-        export CC=${{ matrix.cc }}
-        export CXX=${{ matrix.cxx }}
-        export AR=${{ matrix.ar }}
+        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
+
+        echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
+        echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
+        echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
       
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz.sig
