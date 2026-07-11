@@ -98,7 +98,7 @@ jobs:
         tar -xf gdb-${{ env.GDB_VERSION }}.tar.gz
         cd gdb-${{ env.GDB_VERSION }}
 
-        ./configure \
+        LDFLAGS="-static" ./configure \
           --host=${{ matrix.configure_host }} \
           --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
           --with-libiconv-type=static --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
