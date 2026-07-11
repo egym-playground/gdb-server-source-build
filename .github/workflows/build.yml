@@ -119,7 +119,7 @@ jobs:
         export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
 
         wget https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz \
-            gdb-${{ env.GDB_VERSION }}.tar.gz.sig
+            https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz.sig
         gpg --verify gdb-${{ env.GDB_VERSION }}.tar.gz.sig gdb-${{ env.GDB_VERSION }}.tar.gz
         tar -xf gdb-${{ env.GDB_VERSION }}.tar.gz
         cd gdb-${{ env.GDB_VERSION }}
