@@ -80,8 +80,7 @@ jobs:
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
 
-        ./configure \
-            --build=x86_64-pc-linux-gnu \
+        CC_FOR_BUILD=gcc ./configure \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
