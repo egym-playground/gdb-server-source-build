@@ -51,12 +51,15 @@ jobs:
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
         
         export PATH="$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin"
+
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
         export AR=${{ matrix.ar }}
-        export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-        export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
 
+        export CFLAGS="-static -Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        export CXXFLAGS="-static -Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        export LDFLAGS="-static"
+        
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
