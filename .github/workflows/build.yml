@@ -41,6 +41,11 @@ jobs:
       with:
         lfs: true
 
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential gcc g++
+
     - name: Setup gpg Verification
       run: |
         wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
