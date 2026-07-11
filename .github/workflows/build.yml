@@ -17,31 +17,44 @@ jobs:
   build:
     name: gdbserver (${{ matrix.architecture  }})
     runs-on: ubuntu-latest
-    container:
-      image: muslcc/x86_64:${{ matrix.musl_target }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - architecture: x86_64
-            musl_target: x86_64-linux-musl
+            gdbserver_host: "x86_64-linux-gnu"
+            cross_compile_packages: "x86_64-linux-musl-native"
+            cc: x86_64-linux-musl-gcc
+            cxx: x86_64-linux-musl-g++
           - architecture: armv7l
-            musl_target: armv7l-linux-musleabihf
+            gdbserver_host: "arm-linux-gnueabihf"
+            cross_compile_packages: "armv7r-linux-musleabihf-cross"
+            cc: armv7r-linux-musleabihf-gcc
+            cxx: armv7r-linux-musleabihf-g++
 
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential patchelf ${{ matrix.cross_compile_packages }}
+
     - name: Build gdbserver and its Dependencies from Source
       run: |
-        export CC=gcc
-        export CXX=g++
-
-        apk add make m4
-
+        tar -xf ${{ matrix.cross_compile_packages }}
+        
+        export PATH="$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin"
+        export CC=${{ matrix.cc }}
+        export CXX=${{ matrix.cxx }}
+        
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
         cd libiconv-${{ env.ICONV_VERSION }}
         ./configure \
-            --host=${{ matrix.musl_target }} \
+            --host=${{ matrix.gdbserver_host }} \
             --enable-static \
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
@@ -52,7 +65,7 @@ jobs:
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
         ./configure \
-            --host=${{ matrix.musl_target }} \
+            --host=${{ matrix.gdbserver_host }} \
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
         make -j"$(nproc)"
@@ -63,7 +76,7 @@ jobs:
         tar -xf mpfr-${{ env.MPFR_VERSION }}.tar.gz
         cd mpfr-${{ env.MPFR_VERSION }}
         ./configure \
-            --host=${{ matrix.musl_target }} \
+            --host=${{ matrix.gdbserver_host }} \
             --enable-static --disable-shared \
             --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
             --prefix=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build
@@ -76,7 +89,7 @@ jobs:
         cd gdb-${{ env.GDB_VERSION }}
 
         ./configure \
-          --host=${{ matrix.musl_target }} \
+          --host=${{ matrix.gdbserver_host }} \
           --enable-static --with-static-standard-libraries --disable-libcc1 --disable-tui --disable-inprocess-agent \
           --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
           --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
