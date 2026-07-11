@@ -35,12 +35,6 @@ jobs:
             cxx: armv7r-linux-musleabihf-g++
             ar: armv7r-linux-musleabihf-gcc-ar
     
-    # Map the matrix properties to env variables for the whole job
-    env:
-      CC: ${{ matrix.cc }}
-      CXX: ${{ matrix.cxx }}
-      AR: ${{ matrix.ar }}
- 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -66,6 +60,9 @@ jobs:
         cd libiconv-${{ env.ICONV_VERSION }}
 
         ./configure \
+            CC="${{ matrix.cc }}"   \
+            CXX="${{ matrix.cxx }}" \
+            AR="${{ matriix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static \
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
@@ -80,7 +77,10 @@ jobs:
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
 
-        CC_FOR_BUILD=/usr/bin/gcc ./configure \
+        ./configure \
+            CC="${{ matrix.cc }}"   \
+            CXX="${{ matrix.cxx }}" \
+            AR="${{ matriix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
@@ -97,6 +97,9 @@ jobs:
         cd mpfr-${{ env.MPFR_VERSION }}
 
         ./configure \
+            CC="${{ matrix.cc }}"   \
+            CXX="${{ matrix.cxx }}" \
+            AR="${{ matriix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
@@ -116,12 +119,15 @@ jobs:
         cd gdb-${{ env.GDB_VERSION }}
 
         ./configure \
-          --host=${{ matrix.configure_host }} \
-          --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
-          --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
-          --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
-          --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
-          --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
+            CC="${{ matrix.cc }}"   \
+            CXX="${{ matrix.cxx }}" \
+            AR="${{ matriix.ar }}"  \
+            --host=${{ matrix.configure_host }} \
+            --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
+            --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
+            --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
+            --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
+            --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
         make LDFLAGS="-static" -j"$(nproc)"
         make install-strip
 
