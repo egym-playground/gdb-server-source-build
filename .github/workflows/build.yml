@@ -55,10 +55,6 @@ jobs:
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
         export AR=${{ matrix.ar }}
-
-        export CFLAGS="-static -Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-        export CXXFLAGS="-static -Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-        export LDFLAGS="-static"
         
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
@@ -94,6 +90,10 @@ jobs:
         make -j"$(nproc)"
         make install
         cd ..
+
+        export CFLAGS="-static -Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        export CXXFLAGS="-static -Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        export LDFLAGS="-static"
 
         wget https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz
         tar -xf gdb-${{ env.GDB_VERSION }}.tar.gz
