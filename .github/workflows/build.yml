@@ -53,6 +53,10 @@ jobs:
 
     - name: Build libiconv from Source
       run: |
+        echo "CC=$CC"
+        echo "CXX=$CXX"
+        echo "AR=$AR"
+
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
         cd libiconv-${{ env.ICONV_VERSION }}
@@ -66,6 +70,10 @@ jobs:
 
     - name: Build GMP from Source
       run: |
+        echo "CC=$CC"
+        echo "CXX=$CXX"
+        echo "AR=$AR"
+    
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
