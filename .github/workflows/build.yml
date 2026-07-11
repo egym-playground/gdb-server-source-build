@@ -44,7 +44,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential binutils-multiarch
+        sudo apt-get install -y build-essential binutils-multiarch gcc g++
 
     - name: Setup gpg Verification
       run: |
@@ -78,9 +78,6 @@ jobs:
 
     - name: Build GMP from Source
       run: |
-        export cc=gcc
-        export cxx=g++
-        
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz.sig
         gpg --verify gmp-${{ env.GMP_VERSION }}.tar.gz.sig gmp-${{ env.GMP_VERSION }}.tar.gz
