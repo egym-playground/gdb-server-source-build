@@ -26,13 +26,13 @@ jobs:
             cross_compile_packages: "x86_64-linux-musl-native"
             cc: x86_64-linux-musl-gcc
             cxx: x86_64-linux-musl-g++
-            ar: x86_64-linux-musl-ar
+            ar: x86_64-linux-musl-gcc-ar
           - architecture: armv7l
             configure_host: "arm-linux-musleabihf"
             cross_compile_packages: "armv7r-linux-musleabihf-cross"
             cc: armv7r-linux-musleabihf-gcc
             cxx: armv7r-linux-musleabihf-g++
-            ar: armv7r-linux-musleabihf-ar
+            ar: armv7r-linux-musleabihf-gcc-ar
 
     steps:
     - name: Checkout Repository
