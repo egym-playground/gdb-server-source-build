@@ -62,7 +62,7 @@ jobs:
         ./configure \
             CC="${{ matrix.cc }}"   \
             CXX="${{ matrix.cxx }}" \
-            AR="${{ matriix.ar }}"  \
+            AR="${{ matrix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static \
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
@@ -80,7 +80,7 @@ jobs:
         ./configure \
             CC="${{ matrix.cc }}"   \
             CXX="${{ matrix.cxx }}" \
-            AR="${{ matriix.ar }}"  \
+            AR="${{ matrix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
@@ -99,7 +99,7 @@ jobs:
         ./configure \
             CC="${{ matrix.cc }}"   \
             CXX="${{ matrix.cxx }}" \
-            AR="${{ matriix.ar }}"  \
+            AR="${{ matrix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static --disable-shared \
             --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
@@ -121,7 +121,7 @@ jobs:
         ./configure \
             CC="${{ matrix.cc }}"   \
             CXX="${{ matrix.cxx }}" \
-            AR="${{ matriix.ar }}"  \
+            AR="${{ matrix.ar }}"  \
             --host=${{ matrix.configure_host }} \
             --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
             --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
