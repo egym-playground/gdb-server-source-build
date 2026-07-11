@@ -56,7 +56,7 @@ jobs:
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
         echo "PATH=$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> $GITHUB_ENV
-        set
+
     - name: Build libiconv from Source
       run: |
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
