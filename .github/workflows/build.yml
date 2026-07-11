@@ -38,7 +38,7 @@ jobs:
         export CC="${{ matrix.cc }}"
         export CXX="${{ matrix.cxx }}"
 
-        apk add make
+        apk add make m4
 
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
