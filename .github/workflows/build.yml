@@ -41,11 +41,6 @@ jobs:
       with:
         lfs: true
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential gcc g++
-
     - name: Setup gpg Verification
       run: |
         wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
@@ -60,6 +55,20 @@ jobs:
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
         export AR=${{ matrix.ar }}
+
+        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
+            https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
+        gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
+        tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
+        cd libiconv-${{ env.ICONV_VERSION }}
+
+        ./configure \
+            --host=${{ matrix.configure_host }} \
+            --enable-static \
+            --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
+        make -j"$(nproc)"
+        make install
+        cd ..
         
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz.sig
@@ -72,20 +81,6 @@ jobs:
             --enable-static --disable-shared \
             --prefix=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build
 
-        make -j"$(nproc)"
-        make install
-        cd..
-
-        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
-            https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
-        gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
-        tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
-        cd libiconv-${{ env.ICONV_VERSION }}
-
-        ./configure \
-            --host=${{ matrix.configure_host }} \
-            --enable-static \
-            --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
         make install
         cd ..
@@ -123,7 +118,7 @@ jobs:
           --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
         make LDFLAGS="-static" -j"$(nproc)"
         make install-strip
-        cd..
+        cd ..
 
     - name: Verify Binary
       run: |
