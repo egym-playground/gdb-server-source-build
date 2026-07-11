@@ -33,12 +33,12 @@ jobs:
             cxx: armv7r-linux-musleabihf-g++
 
     steps:
-    - name: Checkout Repository
       uses: actions/checkout@v4
+    - name: Checkout Repository
 
     - name: Build gdbserver and its Dependencies from Source
       run: |
-        tar -xf ${{ matrix.cross_compile_packages }}
+        tar -xf ${{ matrix.cross_compile_packages }}.tgz
         
         export PATH="$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin"
         export CC=${{ matrix.cc }}
