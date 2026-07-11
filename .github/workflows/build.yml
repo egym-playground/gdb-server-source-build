@@ -25,18 +25,14 @@ jobs:
         include:
           - architecture: x86_64
             musl_target: x86_64-linux-musl
-            cc: gcc
-            cxx: g++
           - architecture: armv7l
             musl_target: armv7l-linux-musleabihf
-            cc: arm-linux-gnueabihf-gcc
-            cxx: arm-linux-gnueabihf-g++
 
     steps:
     - name: Build gdbserver and its Dependencies from Source
       run: |
-        export CC="${{ matrix.cc }}"
-        export CXX="${{ matrix.cxx }}"
+        export CC=gcc
+        export CXX=g++
 
         apk add make m4
 
