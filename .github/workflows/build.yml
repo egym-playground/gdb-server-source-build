@@ -56,9 +56,16 @@ jobs:
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
         echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
 
+    - name: Setup gpg Verification
+      run: |
+        wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+        gpg --import gnu-keyring.gpg
+
     - name: Build libiconv from Source
       run: |
-        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
+        wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
+            https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
+        gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
         cd libiconv-${{ env.ICONV_VERSION }}
 
@@ -75,7 +82,9 @@ jobs:
         export CXX=${{ matrix.cxx }}
         export AR=${{ matrix.ar }}
       
-        wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz
+        wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
+            https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz.sig
+        gpg --verify gmp-${{ env.GMP_VERSION }}.tar.gz.sig gmp-${{ env.GMP_VERSION }}.tar.gz
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
 
@@ -89,7 +98,9 @@ jobs:
 
     - name: Build MPFR from Source
       run: |
-        wget https://ftp.gnu.org/gnu/mpfr/mpfr-${{ env.MPFR_VERSION }}.tar.gz
+        wget https://ftp.gnu.org/gnu/mpfr/mpfr-${{ env.MPFR_VERSION }}.tar.gz \
+            https://ftp.gnu.org/gnu/mpfr/mpfr-${{ env.MPFR_VERSION }}.tar.gz.sig
+        gpg --verify mpfr-${{ env.MPFR_VERSION }}.tar.gz.sig mpfr-${{ env.MPFR_VERSION }}.tar.gz
         tar -xf mpfr-${{ env.MPFR_VERSION }}.tar.gz
         cd mpfr-${{ env.MPFR_VERSION }}
 
@@ -106,7 +117,9 @@ jobs:
         export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
         export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
 
-        wget https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz
+        wget https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz \
+            gdb-${{ env.GDB_VERSION }}.tar.gz.sig
+        gpg --verify gdb-${{ env.GDB_VERSION }}.tar.gz.sig gdb-${{ env.GDB_VERSION }}.tar.gz
         tar -xf gdb-${{ env.GDB_VERSION }}.tar.gz
         cd gdb-${{ env.GDB_VERSION }}
 
