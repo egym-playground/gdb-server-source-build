@@ -50,6 +50,9 @@ jobs:
         echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
         echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
+        
+        echo "CC_FOR_BUILD=/usr/bin/gcc" >> "$GITHUB_ENV"
+        echo "CXX_FOR_BUILD=/usr/bin/g++" >> "$GITHUB_ENV"
 
     - name: Build libiconv from Source
       run: |
