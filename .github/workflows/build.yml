@@ -36,11 +36,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential patchelf ${{ matrix.cross_compile_packages }}
-
     - name: Build gdbserver and its Dependencies from Source
       run: |
         tar -xf ${{ matrix.cross_compile_packages }}
