@@ -27,6 +27,7 @@ jobs:
             cc: x86_64-linux-musl-gcc
             cxx: x86_64-linux-musl-g++
             ar: x86_64-linux-musl-gcc-ar
+
           - architecture: armv7l
             configure_host: "arm-linux-musleabihf"
             cross_compile_packages: "armv7r-linux-musleabihf-cross"
@@ -53,7 +54,9 @@ jobs:
         export CC=${{ matrix.cc }}
         export CXX=${{ matrix.cxx }}
         export AR=${{ matrix.ar }}
-        
+        export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
         tar -xf libiconv-${{ env.ICONV_VERSION }}.tar.gz
