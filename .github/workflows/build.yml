@@ -12,6 +12,9 @@ env:
   ICONV_VERSION: "1.18"
   GMP_VERSION: "6.3.0"
   MPFR_VERSION: "4.2.2"
+  CC: ""
+  CXX: ""
+  AR: ""
 
 jobs:
   build:
@@ -46,16 +49,18 @@ jobs:
         wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
         gpg --import gnu-keyring.gpg
 
-    - name: Build GDB and its Dependencies from Source
+    - name: Setup musl ToolChain
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
 
-        export PATH="$PATH:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin"
+        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
 
-        export CC=${{ matrix.cc }}
-        export CXX=${{ matrix.cxx }}
-        export AR=${{ matrix.ar }}
+        echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
+        echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
+        echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
 
+    - name: Build libiconv from Source
+      run: |
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
         gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
@@ -68,8 +73,9 @@ jobs:
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
         make install
-        cd ..
-        
+
+    - name: Build GMP from Source
+      run: |
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz.sig
         gpg --verify gmp-${{ env.GMP_VERSION }}.tar.gz.sig gmp-${{ env.GMP_VERSION }}.tar.gz
@@ -83,8 +89,9 @@ jobs:
 
         make -j"$(nproc)"
         make install
-        cd ..
-        
+
+    - name: Build MPFR from Source
+      run: |
         wget https://ftp.gnu.org/gnu/mpfr/mpfr-${{ env.MPFR_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/mpfr/mpfr-${{ env.MPFR_VERSION }}.tar.gz.sig
         gpg --verify mpfr-${{ env.MPFR_VERSION }}.tar.gz.sig mpfr-${{ env.MPFR_VERSION }}.tar.gz
@@ -98,8 +105,9 @@ jobs:
             --prefix=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build
         make -j"$(nproc)"
         make install
-        cd ..
 
+    - name: Build gdbserver from Source
+      run: |
         export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
         export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
 
@@ -118,7 +126,6 @@ jobs:
           --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
         make LDFLAGS="-static" -j"$(nproc)"
         make install-strip
-        cd ..
 
     - name: Verify Binary
       run: |
