@@ -41,14 +41,16 @@ jobs:
       with:
         lfs: true
 
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+
     - name: Setup musl ToolChain
       run: |
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
 
         echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
-
-        echo "CC_FOR_BUILD=gcc" >> "$GITHUB_ENV"
-        echo "CXX_FOR_BUILD=g++" >> "$GITHUB_ENV"
 
         echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
