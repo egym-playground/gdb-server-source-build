@@ -68,6 +68,7 @@ jobs:
             --prefix=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build
         make -j"$(nproc)"
         make install
+        cd ..
 
     - name: Build GMP from Source
       run: |
