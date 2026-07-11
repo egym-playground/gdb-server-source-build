@@ -41,11 +41,6 @@ jobs:
       with:
         lfs: true
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential binutils-multiarch gcc g++
-
     - name: Setup gpg Verification
       run: |
         wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
@@ -60,6 +55,9 @@ jobs:
         echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
         echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
+        
+        echo "CC_FOR_BUILD=gcc" >> "$GITHUB_ENV"
+        echo "CXX_FOR_BUILD=g++" >> "$GITHUB_ENV"
 
     - name: Build libiconv from Source
       run: |
