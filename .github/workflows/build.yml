@@ -22,12 +22,12 @@ jobs:
       matrix:
         include:
           - architecture: x86_64
-            gdbserver_host: "x86_64-linux-gnu"
+            gdbserver_host: "x86_64-linux-musl"
             cross_compile_packages: "x86_64-linux-musl-native"
             cc: x86_64-linux-musl-gcc
             cxx: x86_64-linux-musl-g++
           - architecture: armv7l
-            gdbserver_host: "arm-linux-gnueabihf"
+            gdbserver_host: "arm-linux-musleabihf"
             cross_compile_packages: "armv7r-linux-musleabihf-cross"
             cc: armv7r-linux-musleabihf-gcc
             cxx: armv7r-linux-musleabihf-g++
