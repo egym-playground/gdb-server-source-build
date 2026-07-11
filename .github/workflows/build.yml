@@ -25,14 +25,18 @@ jobs:
         include:
           - architecture: x86_64
             musl_target: x86_64-linux-musl
+            cc: gcc
+            cxx: g++
           - architecture: armv7l
-            musl_target: arm-linux-musleabihf
+            musl_target: armv7l-linux-musleabihf
+            cc: arm-linux-gnueabihf-gcc
+            cxx: arm-linux-gnueabihf-g++
 
     steps:
     - name: Build gdbserver and its Dependencies from Source
       run: |
-        export CC="${{ matrix.musl_target }}-gcc"
-        export CXX="${{ matrix.musl_target }}-g++"
+        export CC="${{ matrix.cc }}"
+        export CXX="${{ matrix.cxx }}"
 
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz
       
