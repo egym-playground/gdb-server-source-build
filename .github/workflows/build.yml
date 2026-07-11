@@ -44,7 +44,12 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
+        sudo apt-get install -y build-essential binutils-multiarch
+
+    - name: Setup gpg Verification
+      run: |
+        wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+        gpg --import gnu-keyring.gpg
 
     - name: Setup musl ToolChain
       run: |
@@ -56,19 +61,8 @@ jobs:
         echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
         echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
 
-    - name: Setup gpg Verification
-      run: |
-        wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
-        gpg --import gnu-keyring.gpg
-
     - name: Build libiconv from Source
       run: |
-        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
-
-        echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
-        echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
-        echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
-      
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
         gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
@@ -84,12 +78,9 @@ jobs:
 
     - name: Build GMP from Source
       run: |
-        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
-
-        echo "CC=${{ matrix.cc }}" >> "$GITHUB_ENV"
-        echo "CXX=${{ matrix.cxx }}" >> "$GITHUB_ENV"
-        echo "AR=${{ matrix.ar }}" >> "$GITHUB_ENV"
-      
+        export cc=gcc
+        export cxx=g++
+        
         wget https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/gmp/gmp-${{ env.GMP_VERSION }}.tar.gz.sig
         gpg --verify gmp-${{ env.GMP_VERSION }}.tar.gz.sig gmp-${{ env.GMP_VERSION }}.tar.gz
