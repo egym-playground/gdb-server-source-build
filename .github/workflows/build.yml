@@ -107,10 +107,10 @@ jobs:
         make install
 
     - name: Build gdbserver from Source
+      env:
+        CFLAGS: "-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
+        CXXFLAGS: "-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
       run: |
-        export CFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-        export CXXFLAGS="-Dc_ospeed=__c_ospeed -Dc_ispeed=__c_ispeed"
-
         wget https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/gdb/gdb-${{ env.GDB_VERSION }}.tar.gz.sig
         gpg --verify gdb-${{ env.GDB_VERSION }}.tar.gz.sig gdb-${{ env.GDB_VERSION }}.tar.gz
