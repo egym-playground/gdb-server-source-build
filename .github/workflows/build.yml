@@ -40,6 +40,7 @@ jobs:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
       AR: ${{ matrix.ar }}
+      PATH: ${{ env.PATH }}:$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin
  
     steps:
     - name: Checkout Repository
@@ -54,13 +55,10 @@ jobs:
 
     - name: Setup musl ToolChain
       run: |
-        set
         tar -xf $GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}.tgz
-        echo "$GITHUB_WORKSPACE/${{ matrix.cross_compile_packages }}/bin" >> "$GITHUB_PATH"
 
     - name: Build libiconv from Source
       run: |
-        set
         wget https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz \
             https://ftp.gnu.org/gnu/libiconv/libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig
         gpg --verify libiconv-${{ env.ICONV_VERSION }}.tar.gz.sig libiconv-${{ env.ICONV_VERSION }}.tar.gz
@@ -81,8 +79,6 @@ jobs:
         gpg --verify gmp-${{ env.GMP_VERSION }}.tar.gz.sig gmp-${{ env.GMP_VERSION }}.tar.gz
         tar -xf gmp-${{ env.GMP_VERSION }}.tar.gz
         cd gmp-${{ env.GMP_VERSION }}
-
-        set
 
         ./configure \
             --host=${{ matrix.configure_host }} \
