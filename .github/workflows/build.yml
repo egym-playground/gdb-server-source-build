@@ -100,8 +100,8 @@ jobs:
 
         ./configure \
           --host=${{ matrix.configure_host }} \
-          --enable-static --with-static-standard-libraries --disable-libcc1 --disable-tui --disable-inprocess-agent \
-          --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
+          --enable-static --with-static-standard-libraries --disable-tui --disable-inprocess-agent \
+          --with-libiconv-type=static --with-libiconv=$GITHUB_WORKSPACE/libiconv-${{ env.ICONV_VERSION }}/build \
           --with-gmp=$GITHUB_WORKSPACE/gmp-${{ env.GMP_VERSION }}/build  \
           --with-mpfr=$GITHUB_WORKSPACE/mpfr-${{ env.MPFR_VERSION }}/build \
           --prefix=$GITHUB_WORKSPACE/gdb-${{ env.GDB_VERSION }}/build
